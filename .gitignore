@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+backend/venv/
+*.sqlite3
+.DS_Store
+
+# Compiled Python
+*.pyc
+
+# Artifacts / model files
+backend/artifacts/*.pkl
+backend/artifacts/*.joblib
+artifacts/
+
+# Node
+node_modules/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# macOS
+*.DS_Store
