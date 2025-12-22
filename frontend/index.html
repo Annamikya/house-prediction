@@ -6,14 +6,29 @@
 </head>
 <body>
 
-<h2>House Price Prediction</h2>
+<div class="container">
+  <h2>House Price Prediction</h2>
 
-<input id="area" placeholder="Living Area (GrLivArea)">
-<input id="rooms" placeholder="Total Rooms">
+  <div class="form-row">
+    <label>Living Area (GrLivArea)</label>
+    <input id="area" placeholder="e.g., 1500">
+  </div>
 
-<button onclick="predictPrice()">Predict</button>
+  <div class="form-row">
+    <label>Total Rooms (TotRmsAbvGrd)</label>
+    <input id="rooms" placeholder="e.g., 6">
+  </div>
 
-<h3 id="result"></h3>
+  <button id="predictBtn" onclick="predictPrice()">Predict</button>
+
+  <div id="status" class="status">Ready</div>
+  <div id="error" class="error" aria-live="polite"></div>
+  <div id="result" class="result"></div>
+
+  <div class="plot-wrapper">
+    <img id="plot" alt="Prediction plot will appear here" />
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
