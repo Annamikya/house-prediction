@@ -4,17 +4,21 @@ const BACKEND = (typeof BACKEND_URL !== 'undefined' && BACKEND_URL) ? BACKEND_UR
 // Check backend health on page load and provide clearer error guidance
 async function checkBackend() {
     const status = document.getElementById('status');
+    const net = document.getElementById('networkDetails');
     try {
         const resp = await fetch(`${BACKEND}/health`);
         if (resp.ok) {
             const info = await resp.json();
             status.innerText = info.status || 'Backend reachable';
+            if (net) net.innerText = `Backend: ${BACKEND} — /health OK`;
         } else {
             status.innerText = `Backend returned ${resp.status}`;
+            if (net) net.innerText = `Backend: ${BACKEND} — /health returned ${resp.status}`;
         }
     } catch (e) {
         // Friendly guidance when backend isn't reachable
-        status.innerText = 'Backend unreachable — ensure it is running (run: `uvicorn backend.app.main:app --reload --port 8000`) and open the frontend over http (run: `python -m http.server` from project root).';
+        status.innerText = 'Backend unreachable — check the backend URL and that it is running.';
+        if (net) net.innerText = `Error: ${e.message || e}\nBackend tried: ${BACKEND}\nIf running locally, start with: uvicorn app.main:app --host 0.0.0.0 --port 8000`;
         console.error('Backend health check failed', e);
     }
 }
@@ -52,6 +56,8 @@ async function predictPrice() {
             const detail = data.detail || JSON.stringify(data);
             err.innerText = 'Prediction error: ' + detail;
             status.innerText = 'Error';
+            const net = document.getElementById('networkDetails');
+            if (net) net.innerText = `Response status: ${response.status} ${response.statusText}\nBackend URL: ${BACKEND}`;
             console.error('Prediction error', detail);
             return;
         }
@@ -80,10 +86,11 @@ async function predictPrice() {
         }
 
     } catch (e) {
-        // More actionable guidance for the common "Failed to fetch" TypeError
         const msg = e && e.message ? e.message : String(e);
-        err.innerText = 'Network or server error: ' + msg + '\nMake sure the backend is running (run: `uvicorn backend.app.main:app --reload --port 8000`) and that you opened the frontend using an HTTP server (run: `python -m http.server` from project root).';
+        err.innerText = 'Network or server error. See details below.';
         status.innerText = 'Error';
+        const net = document.getElementById('networkDetails');
+        if (net) net.innerText = `Error: ${msg}\nBackend URL: ${BACKEND}\nBrowser online: ${navigator.onLine}`;
         console.error('Network/server error', e);
     } finally {
         btn.disabled = false;
@@ -91,4 +98,24 @@ async function predictPrice() {
 }
 
 // Run health check when the page loads
-window.addEventListener('DOMContentLoaded', checkBackend);
+window.addEventListener('DOMContentLoaded', () => {
+    const backendEl = document.getElementById('backendUrl');
+    if (backendEl) backendEl.innerText = BACKEND;
+    const netEl = document.getElementById('networkDetails');
+    if (netEl) netEl.innerText = '';
+
+    // Common deployment mistakes: warn when site is HTTPS but backend is HTTP (mixed content),
+    // or when frontend is hosted remotely but BACKEND points to localhost.
+    try {
+        if (location.protocol === 'https:' && BACKEND.startsWith('http:')) {
+            if (netEl) netEl.innerText = `Warning: page served via HTTPS but backend is HTTP. Browsers block mixed content. Set BACKEND_URL to an https:// backend.`;
+        } else if (window.location.hostname !== 'localhost' && BACKEND.includes('127.0.0.1')) {
+            if (netEl) netEl.innerText = `Warning: frontend is hosted remotely but BACKEND_URL points to localhost (${BACKEND}). Update BACKEND_URL to the deployed backend URL.`;
+        }
+    } catch (e) {
+        console.warn('Unable to perform deployment heuristics check', e);
+    }
+
+    checkBackend();
+});
+
