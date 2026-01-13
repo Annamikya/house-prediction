@@ -11,13 +11,20 @@ import matplotlib.pyplot as plt
 app = FastAPI(title="House Price Prediction API")
 
 # Allow CORS (development only)
+# NOTE: set allow_credentials=False when using a wildcard origin to avoid CORS rejections
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Small helper logging to make debugging easier
+import logging
+logger = logging.getLogger("uvicorn.error")
+
+logger.debug("App initialized; CORS set (allow_origins='*')")
 
 # Base dir for artifacts
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
