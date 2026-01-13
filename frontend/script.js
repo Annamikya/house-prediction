@@ -1,8 +1,11 @@
+// Use BACKEND_URL from a generated config (backend-config.js) or default to localhost
+const BACKEND = (typeof BACKEND_URL !== 'undefined' && BACKEND_URL) ? BACKEND_URL.replace(/\/$/, '') : 'http://127.0.0.1:8000';
+
 // Check backend health on page load and provide clearer error guidance
 async function checkBackend() {
     const status = document.getElementById('status');
     try {
-        const resp = await fetch('http://127.0.0.1:8000/health');
+        const resp = await fetch(`${BACKEND}/health`);
         if (resp.ok) {
             const info = await resp.json();
             status.innerText = info.status || 'Backend reachable';
@@ -37,7 +40,7 @@ async function predictPrice() {
     status.innerText = 'Predicting...';
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/predict", {
+        const response = await fetch(`${BACKEND}/predict`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -58,7 +61,7 @@ async function predictPrice() {
 
         // Fetch plot image and display as blob
         try {
-            const plotResp = await fetch("http://127.0.0.1:8000/plot", {
+            const plotResp = await fetch(`${BACKEND}/plot`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)

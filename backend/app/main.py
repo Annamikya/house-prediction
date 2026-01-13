@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 import pandas as pd
 import joblib
 import os
@@ -140,4 +141,11 @@ def plot_image(data: dict):
     plt.close(fig)
     buf.seek(0)
     return StreamingResponse(buf, media_type="image/png")
+
+# Serve frontend static files (if project has a sibling /frontend dir)
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
+if os.path.isdir(FRONTEND_DIR):
+    logger.info(f"Mounting frontend static files from {FRONTEND_DIR}")
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 

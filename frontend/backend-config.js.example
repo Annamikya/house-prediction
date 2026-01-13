@@ -1,0 +1,6 @@
+// Example backend config for deployment.
+// When deploying as a Render Static Site, set the environment variable BACKEND_URL to your backend URL
+// and use the build command shown in README-deploy.md to generate a `backend-config.js` file.
+
+// Example (local default):
+const BACKEND_URL = 'http://127.0.0.1:8000';
