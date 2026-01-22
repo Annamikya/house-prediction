@@ -37,18 +37,18 @@ Replace the placeholder pickles in `backend/artifacts/` with your trained model 
 
 ## Deployment on Render
 
-**Important**: Deploy the backend first, then the frontend. The frontend needs the backend URL to work.
+**Critical**: You must deploy the backend **before** the frontend. The frontend needs the backend URL to work. If you see "Backend unreachable" with localhost, the backend isn't deployed or BACKEND_URL isn't set.
 
 ### Backend (Web Service)
 
-1. Create a new **Web Service** on Render.
+1. Create a new **Web Service** on Render (separate from your Static Site).
 2. Connect your GitHub repo.
 3. Set **Root Directory** to `backend`.
 4. Set **Build Command** to:
    pip install -r requirements.txt
 5. Set **Start Command** to:
    gunicorn app.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
-6. Ensure `backend/artifacts/model.pkl` and `backend/artifacts/preprocessor.pkl` are committed to the repo (or add a download step in the build command if stored elsewhere).
+6. Ensure `backend/artifacts/model.pkl` and `backend/artifacts/preprocessor.pkl` are committed.
 7. Deploy. Note the public URL (e.g., `https://your-backend.onrender.com`).
 
 ### Frontend (Static Site)
@@ -56,15 +56,15 @@ Replace the placeholder pickles in `backend/artifacts/` with your trained model 
 1. Create a new **Static Site** on Render.
 2. Connect your GitHub repo.
 3. Set **Root Directory** to `frontend`.
-4. Add an **Environment Variable** (critical — this fixes "Backend unreachable"):
+4. **Add Environment Variable** (this is required — without it, frontend uses localhost):
    - Key: `BACKEND_URL`
-   - Value: `https://your-backend.onrender.com` (replace with your backend's URL from above; must be HTTPS)
+   - Value: `https://your-backend.onrender.com` (from step 7 above; must be HTTPS)
 5. Set **Build Command** to:
    echo "const BACKEND_URL='${BACKEND_URL}';" > backend-config.js
-6. Set **Publish Directory** to `/` (default).
+6. Set **Publish Directory** to `/`.
 7. Deploy.
 
-**Important**: If you skip setting `BACKEND_URL`, the frontend will default to `http://127.0.0.1:8000`, causing "Backend unreachable" since localhost isn't accessible from Render.
+**If still not working**: Check Render Static Site logs — the build command should output the echo. If BACKEND_URL is empty, re-check the env var.
 
 After both are deployed, visit the Static Site URL. The frontend should connect to the backend and work end-to-end.
 
