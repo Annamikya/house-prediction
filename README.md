@@ -14,7 +14,7 @@ Structure:
   - style.css
   - script.js
 
-Quick start:
+## Quick start (local development):
 
 1. Create a Python virtual environment and install backend dependencies:
 
@@ -29,3 +29,39 @@ Quick start:
 3. Open `frontend/index.html` in your browser or serve it from a static host.
 
 Replace the placeholder pickles in `backend/artifacts/` with your trained model and preprocessor.
+
+## Deployment on Render
+
+### Backend (Web Service)
+
+1. Create a new **Web Service** on Render.
+2. Connect your GitHub repo.
+3. Set **Root Directory** to `backend`.
+4. Set **Build Command** to:
+   pip install -r requirements.txt
+5. Set **Start Command** to:
+   gunicorn app.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+6. Ensure `backend/artifacts/model.pkl` and `backend/artifacts/preprocessor.pkl` are committed to the repo (or add a download step in the build command if stored elsewhere).
+7. Deploy. Note the public URL (e.g., `https://your-backend.onrender.com`).
+
+### Frontend (Static Site)
+
+1. Create a new **Static Site** on Render.
+2. Connect your GitHub repo.
+3. Set **Root Directory** to `frontend`.
+4. Add an **Environment Variable**:
+   - Key: `BACKEND_URL`
+   - Value: `https://your-backend.onrender.com` (replace with your backend's URL from above)
+5. Set **Build Command** to:
+   echo "const BACKEND_URL='${BACKEND_URL}';" > backend-config.js
+6. Set **Publish Directory** to `/` (default).
+7. Deploy.
+
+After both are deployed, visit the Static Site URL. The frontend should connect to the backend and work end-to-end.
+
+### Troubleshooting
+
+- If you see "Backend unreachable", ensure `BACKEND_URL` is set correctly in the Static Site and the backend is running.
+- Check Render logs for both services.
+- For mixed content errors, ensure `BACKEND_URL` uses `https://`.
+
