@@ -26,11 +26,18 @@ Structure:
 
    uvicorn backend.app.main:app --reload --port 8000
 
-3. Open `frontend/index.html` in your browser or serve it from a static host.
+3. Set the backend URL for frontend (replace with your deployed backend URL if testing remotely):
+
+   cd frontend
+   python set_backend_url.py http://127.0.0.1:8000
+
+4. Open `frontend/index.html` in your browser or serve it from a static host.
 
 Replace the placeholder pickles in `backend/artifacts/` with your trained model and preprocessor.
 
 ## Deployment on Render
+
+**Important**: Deploy the backend first, then the frontend. The frontend needs the backend URL to work.
 
 ### Backend (Web Service)
 
