@@ -47,7 +47,7 @@ Replace the placeholder pickles in `backend/artifacts/` with your trained model 
 4. Set **Build Command** to:
    pip install -r requirements.txt
 5. Set **Start Command** to:
-   uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
 6. Ensure `backend/artifacts/model.pkl` and `backend/artifacts/preprocessor.pkl` are committed.
 7. Deploy. Note the public URL (e.g., `https://your-backend.onrender.com`).
 
