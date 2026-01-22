@@ -49,13 +49,15 @@ Replace the placeholder pickles in `backend/artifacts/` with your trained model 
 1. Create a new **Static Site** on Render.
 2. Connect your GitHub repo.
 3. Set **Root Directory** to `frontend`.
-4. Add an **Environment Variable**:
+4. Add an **Environment Variable** (critical — this fixes "Backend unreachable"):
    - Key: `BACKEND_URL`
-   - Value: `https://your-backend.onrender.com` (replace with your backend's URL from above)
+   - Value: `https://your-backend.onrender.com` (replace with your backend's URL from above; must be HTTPS)
 5. Set **Build Command** to:
    echo "const BACKEND_URL='${BACKEND_URL}';" > backend-config.js
 6. Set **Publish Directory** to `/` (default).
 7. Deploy.
+
+**Important**: If you skip setting `BACKEND_URL`, the frontend will default to `http://127.0.0.1:8000`, causing "Backend unreachable" since localhost isn't accessible from Render.
 
 After both are deployed, visit the Static Site URL. The frontend should connect to the backend and work end-to-end.
 
