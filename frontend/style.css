@@ -11,7 +11,7 @@ body {
 
 .container {
     background: #fff;
-    padding: 24px;
+    padding: 32px;
     border-radius: 12px;
     box-shadow: 0 6px 24px rgba(35, 45, 65, 0.08);
     max-width: 720px;
@@ -20,6 +20,7 @@ body {
 
 h2 {
     margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .form-row {
@@ -42,6 +43,11 @@ button {
     padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background: #1d4ed8;
 }
 
 button:disabled {
